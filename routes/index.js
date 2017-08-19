@@ -10,7 +10,7 @@ let Article = require('../models/articles');
 
 //Check connection
 db.once('open', function(){
-    console.log('Connected to MongoDB');
+    console.log('1Connected to MongoDB');
 })
 //Check for DB errors
 db.on('error', function(error){
