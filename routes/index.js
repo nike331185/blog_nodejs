@@ -1,21 +1,12 @@
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/nodekb');
-let db = mongoose.connection;
+
+
 
 //Bring in models
 let Article = require('../models/articles');
 
-//Check connection
-db.once('open', function(){
-    console.log('1Connected to MongoDB');
-})
-//Check for DB errors
-db.on('error', function(error){
-    console.log(error);
-})
 
 
 

@@ -1,18 +1,6 @@
 var express = require('express');
 var router =express.Router();
 
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/nodekb');
-let db = mongoose.connection;
-
-db.once('open', function(){
-    console.log('2Connected to MongoDB');
-})
-//Check for DB errors
-db.on('error', function(error){
-    console.log(error);
-})
-
 //Bring in models
 let Article = require('../models/articles');
 
@@ -69,19 +57,34 @@ router.get('/edit/:id',function(req,res){
 
 
 router.post('/add', function(req, res) {
-  let article = new Article(); 
-  article.title = req.body.title;
-  article.author = req.body.author;
-  article.body = req.body.body;
-  article.save(function(err){
-    if(err){  
-      console.log(err);
-      return;
-    }else{
-      // req.flash('success','Article Added')
-      res.redirect('/');
-    }
-  });
+  //檢查輸入是否有誤
+  req.checkBody('title','Title is required').notEmpty();
+  req.checkBody('author','Author is required').notEmpty();
+  req.checkBody('body','Body is required').notEmpty();
+
+  let errors = req.validationErrors();
+  console.log("errors",errors);
+  if(errors){
+    res.render('add',{
+        title:'Add Articles',
+        errors:errors
+    });
+  }else{
+    let article = new Article(); 
+    article.title = req.body.title;
+    article.author = req.body.author;
+    article.body = req.body.body;
+
+    article.save(function(err){
+      if(err){  
+        console.log(err);
+        return;
+      }else{
+        req.flash('success','Article Added')
+        res.redirect('/');
+      }
+    });
+  }  
 });
 router.post('/edit/:id', function(req, res) {
   let article = {}; 
@@ -99,8 +102,6 @@ router.post('/edit/:id', function(req, res) {
   });
 
 });
-
-
 
 
 module.exports = router;
