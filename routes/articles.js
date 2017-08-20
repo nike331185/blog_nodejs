@@ -37,6 +37,20 @@ router.get('/:id',function(req,res){
    });     
 });
 
+router.delete('/:id',function(req,res){
+  let query = {_id:req.params.id}
+
+  Article.remove(query,function(err){
+     if(err){ 
+        console.log(err)
+      } else{
+          res.send('Success');
+            //res.status(200).send({ "success": true, "result": article });
+     }       
+       
+   });     
+});
+
 router.get('/edit/:id',function(req,res){
   console.log("req.params.id",req.params.id);
     Article.findById(req.params.id,function(err, article){
@@ -64,6 +78,7 @@ router.post('/add', function(req, res) {
       console.log(err);
       return;
     }else{
+      // req.flash('success','Article Added')
       res.redirect('/');
     }
   });
