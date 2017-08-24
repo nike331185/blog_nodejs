@@ -59,12 +59,13 @@ router.get('/login',function(req, res){
     res.render('login');
 });
 router.post('/login',function(req, res, next){
-   
+  
     passport.authenticate('local', {
-        successRedirect:'/',
-        failureRedirect:'/users/login',
-        failureFlash: true 
-    })(req, res, next); 
+        successRedirect:'/',            // 成功則導入首頁
+        failureRedirect:'/users/login', // 失敗則返回登入頁 
+        failureFlash: true  // 允許 flash 訊息
+    })(req, res, next) 
+      
 });
  
 

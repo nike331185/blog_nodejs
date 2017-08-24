@@ -89,6 +89,6 @@ app.use('/articles', articles);
 app.use('/users', users);
 app.use('/', index);
 // Start Server
-app.listen(3000, function(){
+app.listen(4000, function(){
   console.log('Server started on port 3000...');
 });
