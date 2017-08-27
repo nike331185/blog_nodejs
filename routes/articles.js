@@ -3,24 +3,29 @@ var router =express.Router();
 
 //Bring in models
 let Article = require('../models/articles');
+let User = require('../models/user');
 
-router.get('/add', function(req, res) {
+router.get('/add', ensureAuthenticated, function(req, res) {
   res.render('add', {
     title:'Add Articles'
   });
 });
 router.get('/:id',function(req,res){
-  console.log("req.params.id",req.params.id);
+  
     Article.findById(req.params.id,function(err, article){
-       if(err){
+      User.findById(article.author,function(err,user){
+         if(err){
             console.log(err)
        } else{
             res.render('article',{
                 title:'Articles',
-                article:article
+                article:article ,
+                author:user.name
             });
             //res.status(200).send({ "success": true, "result": article });
        }       
+      })
+      
        
    });     
 });
@@ -59,7 +64,6 @@ router.get('/edit/:id',function(req,res){
 router.post('/add', function(req, res) {
   //檢查輸入是否有誤
   req.checkBody('title','Title is required').notEmpty();
-  req.checkBody('author','Author is required').notEmpty();
   req.checkBody('body','Body is required').notEmpty();
 
   let errors = req.validationErrors();
@@ -70,9 +74,10 @@ router.post('/add', function(req, res) {
         errors:errors
     });
   }else{
+    console.log("req.user._id",req.user);
     let article = new Article(); 
     article.title = req.body.title;
-    article.author = req.body.author;
+    article.author = req.user._id;
     article.body = req.body.body;
 
     article.save(function(err){
@@ -103,5 +108,14 @@ router.post('/edit/:id', function(req, res) {
 
 });
 
-
+//Access Control 
+function ensureAuthenticated(req, res, next){
+  if(req.isAuthenticated()){
+    return next();
+  }
+  else {
+    req.flash('danger', 'Please login');
+    res.redirect('/users/login');
+  }
+}
 module.exports = router;

@@ -80,6 +80,12 @@ require('./config/passport')(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.get('*',function(req, res, next){
+  res.locals.user = req.user || null;
+  console.log("res.locals",res.locals)
+  next();
+})
+
 
 // Route Files
 let articles = require('./routes/articles');
@@ -90,5 +96,5 @@ app.use('/users', users);
 app.use('/', index);
 // Start Server
 app.listen(4000, function(){
-  console.log('Server started on port 3000...');
+  console.log('Server started on port 4000...');
 });
